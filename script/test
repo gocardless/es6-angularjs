@@ -1,0 +1,13 @@
+#!/bin/bash
+# Usage: script/test
+# Runs the projects test suite.
+
+set -e errexit
+
+./script/ensure-no-ddescribe
+
+./node_modules/.bin/jshint .
+
+./node_modules/.bin/karma start --single-run
+
+./script/e2etest

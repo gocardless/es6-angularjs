@@ -1,0 +1,7 @@
+#!/bin/bash
+# Usage: script/css
+# Runs the projects's citest suite.
+
+set -e errexit
+
+./script/lib/css.js client/assets/stylesheets/main.css client/main.css

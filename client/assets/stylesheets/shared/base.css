@@ -1,0 +1,188 @@
+/* ==========================================================================
+   Base
+   ========================================================================== */
+
+/**
+ * A thin layer on top of normalize.css that provides a starting point more
+ * suitable for web applications. Removes the default spacing and border for
+ * appropriate elements.
+ */
+
+*, *:before, *:after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+html {
+  background: inherit;
+  font-size: var(--font-size-s);
+}
+
+html,
+button,
+input,
+select,
+textarea {
+  color: var(--color-gray-vdark);
+  font-family: var(--font-family-base);
+  -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  line-height: var(--base-line-height);
+}
+
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+}
+
+a:focus
+a:hover,
+a:active {
+  color: var(--color-primary);
+}
+
+a:hover,
+a:active {
+  text-decoration: underline;
+}
+
+a:focus {
+  text-decoration: none;
+}
+
+:focus {
+  outline: 1px dotted var(--color-gray);
+}
+
+blockquote,
+dl,
+dd,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+figure,
+p,
+pre {
+  margin: 0;
+}
+
+button {
+  background: transparent;
+  border: 0;
+  padding: 0;
+}
+
+fieldset {
+  border: 0;
+  margin: 0;
+  padding: 0;
+}
+
+iframe {
+  border: 0;
+}
+
+ol,
+ul {
+  margin: 0;
+  list-style: none;
+  padding: 0;
+}
+
+/**
+ * Suppress the focus outline on links that cannot be accessed via keyboard.
+ * This prevents an unwanted focus outline from appearing around elements that
+ * might still respond to pointer events.
+ */
+
+[tabindex="-1"]:focus {
+  outline: none !important;
+}
+
+/*
+* A better looking default horizontal rule
+*/
+hr {
+  box-sizing: border-box;
+  display: block;
+  height: 1px;
+  margin: 1.626 0;
+  padding: 0;
+  border: 0;
+  border-top: 1px solid var(--color-gray-vlight);
+}
+
+/*
+ * Remove the gap between images and the bottom of their containers: h5bp.com/i/440
+ */
+img {
+  vertical-align: middle;
+  max-width: 100%;
+}
+
+/* Override normalize */
+input[type="search"] {
+  box-sizing: border-box;
+}
+
+/*
+ * Allow only vertical resizing of textareas.
+ * Reset height since textareas have rows
+ */
+textarea {
+  height: auto;
+  resize: vertical;
+}
+
+ /* Make multiple select elements height not fixed  */
+select[multiple],
+select[size] {
+  height: auto;
+}
+
+input[type='number']::-webkit-outer-spin-button,
+input[type='number']::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* FF < 19  */
+input:-moz-placeholder,
+textarea:-moz-placeholder {
+  color: var(--color-gray);
+}
+
+/* FF >= 19  */
+input::-moz-placeholder,
+textarea::-moz-placeholder {
+  color: var(--color-gray);
+}
+
+/* IE 10  */
+input:-ms-input-placeholder,
+textarea:-ms-input-placeholder {
+  color: var(--color-gray);
+}
+
+input::-webkit-input-placeholder,
+textarea::-webkit-input-placeholder {
+  color: var(--color-gray);
+}
+
+/**
+ * Hide when Angular is not yet loaded and initialized
+ */
+[ng-cloak] {
+  display: none;
+}

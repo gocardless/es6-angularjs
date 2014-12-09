@@ -1,0 +1,16 @@
+#!/bin/bash
+# Usage: script/e2etest
+# Runs the projects integration tests.
+
+set -e errexit
+
+HTTP_PORT=9393
+
+DIST=./e2e-dist/ ./script/build
+
+./script/lib/server.js --port=$HTTP_PORT --root ./e2e-dist &
+E2E_TEST_PID=$!
+
+trap "kill $E2E_TEST_PID" INT TERM EXIT
+
+HTTP_PORT=$HTTP_PORT ./node_modules/.bin/protractor

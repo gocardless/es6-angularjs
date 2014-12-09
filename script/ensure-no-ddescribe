@@ -1,0 +1,17 @@
+#!/bin/bash
+
+DDESCRIBE_LINES=`grep 'ddescribe\|iit\|browser.pause\(\)' -l --include \*.js -r client/app`
+
+DDESCRIBE_COUNT=`echo $DDESCRIBE_LINES | awk 'NF > 0' | wc -l | awk '{ print $1}'`
+
+ZERO="0"
+
+if [ "$DDESCRIBE_COUNT" != "$ZERO" ];
+then
+  echo "WARNING: found ddescribe, iit or browser.pause(), exiting 1:"
+  echo $DDESCRIBE_LINES
+  exit 1
+else
+  exit 0
+fi
+

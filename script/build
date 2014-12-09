@@ -1,0 +1,28 @@
+#!/bin/bash
+# Usage: script/build
+# Runs the projects's build.
+
+trap "exit 1" TERM
+
+if [[ -z "$DIST" ]]; then
+  echo "Missing DIST"
+  kill -s TERM $$
+fi
+
+# Add trailing slash and prepend ./
+DIST=$(echo "./$DIST" | sed "s/\/$//")"/"
+
+# Make sure DIST exists
+mkdir -p $DIST
+
+# Clean
+rm -r $DIST
+
+# Copy
+cp -a ./client/. $DIST
+
+# Build
+./script/css
+./script/precompile
+ulimit -n 4096
+script/lib/build-production.js --root ./client --outroot $DIST *.html admin/*.html

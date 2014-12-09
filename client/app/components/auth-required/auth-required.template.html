@@ -1,0 +1,12 @@
+<div>
+  <nav>
+    <a ui-sref="authRequired.home.index"
+       ng-class="{ 'is-active': ctrl.isParentStateActive('authRequired.home') }">
+      <span>Home</span>
+    </a>
+  </nav>
+
+  <main>
+    <ui-view></ui-view>
+  </main>
+</div>

@@ -1,0 +1,21 @@
+:root {
+  --font-family-base: sans-serif;
+  --font-family-monospace: monospace;
+
+  --font-size-xxxl: 24px;
+  --font-size-xxl: 20px;
+  --font-size-xl: 18px;
+  --font-size-l: 16px;
+  --font-size-m: 15px;
+  --font-size-s: 14px;
+  --font-size-xs: 13px;
+  --font-size-xxs: 12px;
+  --font-size-xxxs: 11px;
+
+  --base-line-height: 1.625;
+
+  --color-gray-vdark: #555;
+  --color-gray: #A5A5A5;
+  --color-gray-vlight: #EEE;
+  --color-primary: #5092DA;
+}

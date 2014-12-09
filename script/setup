@@ -1,0 +1,21 @@
+#!/bin/bash
+# Usage: script/setup
+# Installs project dependencies.
+
+trap "exit 1" TERM
+
+if [ ! command -v brew >/dev/null 2>&1 ]; then
+  echo "Install homebrew: ruby -e \"$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)\""
+  kill -s TERM $$
+else
+  echo "Install required brew packages for assetgraph:"
+  echo "--> brew install cairo jpeg giflib optipng pngcrush pngquant pango graphicsmagick jpeg-turbo inkscape"
+fi
+
+if [ command -v node >/dev/null 2>&1 ]; then
+  echo "Install node: brew install node"
+  kill -s TERM $$
+fi
+
+npm install
+./node_modules/.bin/webdriver-manager update
