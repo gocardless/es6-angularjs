@@ -14,10 +14,13 @@
 // Use:
 // ./build-production.js --root ./client --outroot ./dist
 
-var path = require('path');
-var fs = require('fs');
+// # TODO
+// [ ] Handle svgs in assetgraph
+// [ ] Images don't seem to be linked..
+// [ ] Move queue into separate transforms
 
 var AssetGraph = require('assetgraph-builder');
+var systemJsAssetGraph = require('systemjs-assetgraph');
 
 var argv = require('minimist')(process.argv.slice(2));
 var config = {
@@ -34,10 +37,6 @@ var config = {
   browsers: ['> 1%', 'last 2 versions', 'Firefox ESR']
 };
 
-fs.readdirSync(path.resolve(__dirname, 'build-transforms')).forEach(function (fileName) {
-  AssetGraph.registerTransform(path.resolve(__dirname, 'build-transforms', fileName));
-});
-
 if (!config.root || !config.outRoot) {
   throw new Error('--root and --outroot need to set');
 }
@@ -52,18 +51,7 @@ new AssetGraph({ root: config.root })
     preventPopulationOfJavaScriptAssetsUntilConfigHasBeenFound: true
   })
   .loadAssets(config.loadAssets)
-  .removeRelations({
-    type: 'HtmlScript',
-    to: {
-      url: /\/hint.js$/
-    }
-  }, {
-    unresolved: true,
-    detach: true,
-    removeOrphan: true
-  })
-  .systemJsProduction({
-    root: config.root,
+  .queue(systemJsAssetGraph({
     outRoot: config.outRoot,
 
     // comment out the below to use injection instead of bundling
@@ -75,7 +63,7 @@ new AssetGraph({ root: config.root })
       }
     },
     bundle: true
-  })
+  }))
   .buildProduction({
     version: config.version,
     optimizeImages: config.optimizeImages,

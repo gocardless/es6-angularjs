@@ -9707,6 +9707,18 @@
         }
       }
     },
+    "systemjs-assetgraph": {
+      "version": "0.1.0",
+      "from": "systemjs-assetgraph@*",
+      "resolved": "https://registry.npmjs.org/systemjs-assetgraph/-/systemjs-assetgraph-0.1.0.tgz",
+      "dependencies": {
+        "rsvp": {
+          "version": "3.0.14",
+          "from": "rsvp@>=3.0.14 <4.0.0",
+          "resolved": "https://registry.npmjs.org/rsvp/-/rsvp-3.0.14.tgz"
+        }
+      }
+    },
     "systemjs-builder": {
       "version": "0.4.5",
       "from": "systemjs-builder@>=0.4.5 <0.5.0",

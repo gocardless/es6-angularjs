@@ -45,6 +45,7 @@
     "rework-vars": "^3.1.1",
     "send": "^0.10.0",
     "serve-static": "^1.7.0",
+    "systemjs-assetgraph": "^0.1.0",
     "systemjs-builder": "^0.4.5",
     "traceur": "^0.0.74",
     "write-file-stdout": "0.0.2"
