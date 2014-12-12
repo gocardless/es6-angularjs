@@ -1,27 +1,36 @@
 ES6 + AngularJS
 ===============
 
-## Dependencies
+This is a sample Angular 1.3 application that is structured using ES6 modules and adheres to the [GoCardless Angular style guide](https://github.com/gocardless/angularjs-style-guide).
+
+## Prerequisites:
+
+- node.js: `brew install node`
+
+## Application Dependencies
+
+All the dependencies required for the build system, testing and so on are managed with npm and defined in `package.json`. They can be installed with:
 
 ```
 npm install
 ```
 
-## Running
+## Running the Application
 
-```
-npm start
-```
+You can run `npm start` to fire up the application on `http://localhost:3000`.
 
 ## Tests
 
+You can use `npm test` to run JSHint, Karma Unit tests and our E2E tests.
+
+Typically in development we run only unit tests. You can run these with Karma:
+
 ```
-npm test
+./node_modules/.bin/karma start
 ```
 
-## Prerequisites:
+Karma will automatically watch the files and rerun tests when files change.
 
-- node.js: `brew install node`
 
 # Live Reloading
 
@@ -29,13 +38,8 @@ Install the [fb-flo](https://chrome.google.com/webstore/detail/fb-flo/ahkfhobdid
 
 To enable live-reloading have the developer tools open and activate fb-flo.
 
-# Unit tests
 
-```
-karma start
-```
-
-# Debugging Protractor tests
+# Debugging Protractor (E2E) tests
 
 ## Running individual files
 
