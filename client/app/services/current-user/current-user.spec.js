@@ -10,12 +10,15 @@ describe('CurrentUser', function() {
 
   beforeEach(inject(function($injector) {
     CurrentUser = $injector.get('CurrentUser');
-    scope = $injector.get('$rootScope').$new();
+    scope = $injector.get('$rootScope');
   }));
 
   describe('.get', function() {
     it('has a user', function() {
-      var user = CurrentUser.get();
+      var user;
+      CurrentUser.get().then(function(data) {
+        user = data;
+      });
       scope.$digest();
       expect(user).toEqual({ name: 'GoCardless' });
     });

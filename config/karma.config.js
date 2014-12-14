@@ -1,7 +1,5 @@
 'use strict';
 
-var packageJson = require('../package.json');
-
 var traceurOptions = require('./traceur.config');
 
 traceurOptions.sourceMaps = true;
@@ -14,29 +12,20 @@ module.exports = function(config) {
     frameworks: ['jasmine', 'traceur'],
     browsers: ['Chrome'],
     reporters: ['progress'],
-    browserDisconnectTimeout: 10000,
-    browserDisconnectTolerance: 2,
-    browserNoActivityTimeout: 30000,
-    sauceLabs: {
-      username: 'gocardless',
-      accessKey: process.env.GC_SAUCE_LABS_KEY,
-      startConnect: true,
-      testName: packageJson.name,
-      options: {
-        'selenium-version': '2.43.0'
-      }
-    },
     files: [
       'components/es6-module-loader/dist/es6-module-loader.src.js',
       'components/system.js/dist/system.src.js',
       'loader.config.js',
 
+      // Serve but don't create script tags for any files being `import`ed
       { pattern: '**/*.js', included: false },
       { pattern: '**/*.html', included: false },
       { pattern: '**/*.json', included: false },
 
       '../config/traceur-runtime-patch.js',
       '../config/file-name-to-module-name.js',
+
+      // Load and initialize all spec files using SystemJS
       '../config/karma-spec-loader.config.js',
     ],
     exclude: [

@@ -1,7 +1,6 @@
-describe('Home page', function() {
-  it('renders', function() {
+describe('home index', function() {
+  it('has heading', function() {
     browser.get('/');
-    browser.pause();
     expect(element(by.css('h2')).getText()).toEqual('Example');
   });
 });

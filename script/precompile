@@ -1,8 +1,7 @@
 #!/usr/bin/env node
 
 // Usage: script/precompile
-// Precompiles client/app to client/app-compiled and 
-//   client/admin to client/admin-compiled.
+// Precompiles client/app to client/app-compiled and
 
 'use strict';
 
@@ -20,7 +19,7 @@ function preCompile(inDir, outDir, baseDir) {
 
     files.forEach(function(file) {
       var relFile = path.relative(baseDir, file);
-      
+
       var outFile = outDir + '/' + relFile.substr(inDir.length);
 
       mkdirp(path.resolve(baseDir, path.dirname(outFile)), function(err) {
@@ -30,7 +29,7 @@ function preCompile(inDir, outDir, baseDir) {
           return;
         }
 
-        if (relFile.match(/^(app|admin)\/.+\.js$/)) {
+        if (relFile.match(/^(app)\/.+\.js$/)) {
           precompile.precompile(relFile, outFile, baseDir, function(err) {
             if (err)
               throw err;
@@ -55,4 +54,3 @@ function preCompile(inDir, outDir, baseDir) {
 }
 
 preCompile('app', 'app-compiled', 'client');
-preCompile('admin', 'admin-compiled', 'client');

@@ -24,5 +24,10 @@ cp -a ./client/. $DIST
 # Build
 ./script/css
 ./script/precompile
+
+# Increas the max number of file descriptiors
 ulimit -n 4096
-script/lib/build-production.js --root ./client --outroot $DIST *.html admin/*.html
+
+script/lib/build-production.js --root ./client --outroot $DIST *.html
+
+rm -r $DIST/app $DIST/app-compiled $DIST/components $DIST/assets/stylesheets $DIST/*.js $DIST/*.css

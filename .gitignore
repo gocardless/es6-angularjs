@@ -1,6 +1,5 @@
 .DS_Store
 node_modules/*
-e2eserver/node_modules/*
 dist/*
 e2e-dist/*
 Session.vim

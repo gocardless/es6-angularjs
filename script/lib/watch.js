@@ -21,7 +21,7 @@ var options = {
 };
 
 function isIgnorePath(filepath) {
-  return filepath === 'main.css' || path.dirname(filepath).match(/^(admin-compiled|app-compiled)(\/|$)/);
+  return filepath === 'main.css' || path.dirname(filepath).match(/^(app-compiled)(\/|$)/);
 }
 
 function rootPath(filepath) {
@@ -30,7 +30,7 @@ function rootPath(filepath) {
 
 function handleCompile(filepath, callback) {
   var ext = path.extname(filepath);
-  var inUncompiled = path.dirname(filepath).match(/^(admin|app)(\/|$)/);
+  var inUncompiled = path.dirname(filepath).match(/^(app)(\/|$)/);
   var compiledFile;
 
   if (ext === '.css') {
@@ -42,7 +42,7 @@ function handleCompile(filepath, callback) {
     });
   } else if (ext === '.js' && inUncompiled) {
     try {
-      compiledFile = filepath.replace(/^(admin|app)/g, '$1-compiled');
+      compiledFile = filepath.replace(/^(app)/g, '$1-compiled');
       precompile.precompile(filepath, compiledFile, options.root, function(err) {
         callback(err, compiledFile, true);
       });
@@ -52,7 +52,7 @@ function handleCompile(filepath, callback) {
     }
   } else if (inUncompiled) {
     // copy any non-js accross
-    compiledFile = filepath.replace(/^(admin|app)/g, '$1-compiled');
+    compiledFile = filepath.replace(/^(app)/g, '$1-compiled');
     fs.writeFileSync(rootPath(compiledFile), fs.readFileSync(rootPath(filepath)));
     callback(null, compiledFile, true);
   } else {

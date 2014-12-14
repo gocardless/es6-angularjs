@@ -17,7 +17,7 @@ npm install
 
 ## Running the Application
 
-You can run `npm start` to fire up the application on `http://localhost:3000`.
+You can run `npm start` to fire up the application on `http://localhost:3010`.
 
 ## Tests
 
@@ -31,13 +31,11 @@ Typically in development we run only unit tests. You can run these with Karma:
 
 Karma will automatically watch the files and rerun tests when files change.
 
-
 # Live Reloading
 
 Install the [fb-flo](https://chrome.google.com/webstore/detail/fb-flo/ahkfhobdidabddlalamkkiafpipdfchp?hl=en) chrome extension.
 
 To enable live-reloading have the developer tools open and activate fb-flo.
-
 
 # Debugging Protractor (E2E) tests
 
@@ -70,55 +68,13 @@ it('renders index', function() {
 });
 ```
 
-## Pausing to debug
+# Build & Deployment
 
-Add `browser.debugger();` to your spec.
-```js
-it('fails to find a non-existent element', function() {
-  browser.get('app/index.html');
+Create a production optimized build using [AssetGraph Builder](https://github.com/assetgraph/assetgraph-builder):
 
-  // Run this statement before the line which fails. If protractor is run
-  // with the debugger (protractor debug <...>), the test
-  // will pause after loading the webpage but before trying to find the
-  // element.
-  browser.debugger();
-
-  // This element doesn't exist, so this fails.
-  var nonExistant = element(by.binding('nopenopenope'));
-});
 ```
-
-Serve `client/` on port `3010`
+DIST=./dist ./script/build
 ```
-npm start
-```
-
-Run protractor in debug mode
-```
-HTTP_PORT=3010 ./node_modules/.bin/protractor debug config/protractor.config.js
-```
-
-## Interactive debugging
-
-Start the server on port `3010` serving `client/`
-```
-npm start
-```
-
-Start standalone Selenium server
-```
-./node_modules/.bin/webdriver-manager start
-```
-
-Start Protractor's `elemenentexplorer.js`
-```
-./node_modules/protractor/bin/elementexplorer.js http://127.0.0.1:3010
-> browser.rootEl = '[data-main-app]'
-> browser.waitForAngular();
-> $$('body');
-```
-
-You can now access the Protractor APIs in a REPL and interactively control the WebDriver instance.
 
 # Credits
 

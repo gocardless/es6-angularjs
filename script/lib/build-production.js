@@ -2,23 +2,6 @@
 
 'use strict';
 
-// # Build production
-// Config-less assetgraph production builder
-// Takes a root directory and outputs a optimized version
-//
-// How:
-// 1. Find all *.html assets and build a graph with all linked resources
-// 2. assetgraph builder does most of the optimization (concat, minify etc)
-// 3. System.js bundle is created for System.import's, with a System.config
-//
-// Use:
-// ./build-production.js --root ./client --outroot ./dist
-
-// # TODO
-// [ ] Handle svgs in assetgraph
-// [ ] Images don't seem to be linked..
-// [ ] Move queue into separate transforms
-
 var AssetGraph = require('assetgraph-builder');
 var systemJsAssetGraph = require('systemjs-assetgraph');
 
@@ -55,11 +38,10 @@ new AssetGraph({ root: config.root })
     outRoot: config.outRoot,
 
     // comment out the below to use injection instead of bundling
-    // override use of app-compiled, admin-compiled to ensure source maps
+    // override use of app-compiled to ensure source maps
     configOverride: {
       map: {
-        app: 'app',
-        admin: 'admin'
+        app: 'app'
       }
     },
     bundle: true

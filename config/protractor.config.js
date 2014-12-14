@@ -18,21 +18,14 @@ exports.config = {
     browser.addMockModule('disableNgAnimate', disableNgAnimate);
   },
   directConnect: true,
-  chromeOnly: true,
-  chromeDriver: 'node_modules/protractor/selenium/chromedriver',
-  allScriptsTimeout: 11000,
-  exclude: [],
   suites: {
     full: 'client/app/**/*.e2e.js'
   },
   capabilities: {
     browserName: 'chrome',
-    count: 1,
-    shardTestFiles: false,
-    maxInstances: 1,
-    version: 'ANY',
-    chromeOptions: {
-    }
+    shardTestFiles: true,
+    maxInstances: 2,
+    version: 'ANY'
   },
   baseUrl: 'http://localhost:' + options.port,
   rootElement: '[data-main-app]',

@@ -16,22 +16,27 @@ var options = {
   port: argv.p || argv.port,
   root: argv.r || argv.root || _.flatten([argv._])[0],
   open: argv.open || false,
-  verbose: argv.v || argv.verbose || false
+  verbose: argv.v || argv.verbose || false,
+  index: argv.index || 'index.html',
 };
 
 var server = connect()
+  .use(function serveOverrideIndex(req, res, next) {
+    if (options.index !== 'index.html' &&
+        url.parse(req.url).pathname.match(/^(\/|\/index.html)$/)) {
+      send(req, '/' + options.index, { root: options.root })
+        .pipe(res);
+    } else {
+      next();
+    }
+  })
   .use(serveStatic(options.root))
   .use(function serveIndex(req, res, next) {
     if (req.method !== 'GET' || !req.headers.accept.match('text/html')) {
       return next();
     }
-    if (url.parse(req.url).pathname.match(/^\/admin/)) {
-      send(req, '/admin/index.html', { root: options.root })
-        .pipe(res);
-    } else {
-      send(req, '/index.html', { root: options.root })
-        .pipe(res);
-    }
+    send(req, '/' + options.index, { root: options.root })
+      .pipe(res);
   });
 
 if (options.verbose) {
