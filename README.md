@@ -31,15 +31,23 @@ Typically in development we run only unit tests. You can run these with Karma:
 
 Karma will automatically watch the files and rerun tests when files change.
 
-# Live Reloading
+## Live Reloading
 
 Install the [fb-flo](https://chrome.google.com/webstore/detail/fb-flo/ahkfhobdidabddlalamkkiafpipdfchp?hl=en) chrome extension.
 
 To enable live-reloading have the developer tools open and activate fb-flo.
 
-# Debugging Protractor (E2E) tests
+## Build & Deployment
 
-## Running individual files
+Create a production optimized build using [AssetGraph Builder](https://github.com/assetgraph/assetgraph-builder):
+
+```
+DIST=./dist ./script/build
+```
+
+## Debugging Protractor (E2E) tests
+
+### Running individual files
 
 Serve `client/` on port `3010`
 
@@ -53,7 +61,7 @@ Run protractor with `--specs` option
 HTTP_PORT=3010 ./node_modules/.bin/protractor --specs client/app/routes/mandates/show/mandates-show.e2e.js
 ```
 
-## Pausing the browser
+### Pausing the browser
 
 Add `browser.pause();` to your spec.
 
@@ -68,14 +76,6 @@ it('renders index', function() {
 });
 ```
 
-# Build & Deployment
-
-Create a production optimized build using [AssetGraph Builder](https://github.com/assetgraph/assetgraph-builder):
-
-```
-DIST=./dist ./script/build
-```
-
-# Credits
+## Credits
 
 - Build system/ES6 tooling: [Guy Bedford](https://github.com/guybedford)
