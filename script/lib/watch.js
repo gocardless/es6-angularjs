@@ -15,13 +15,13 @@ var precompile = require('./precompile');
 var options = {
   verbose: argv.v || argv.verbose || false,
   root: argv.r || argv.root || _.flatten([argv._])[0],
-  glob: _.flatten([argv.g || argv.glob || '**/*']),
+  glob: _.flatten([argv.g || argv.glob || ['**/*']]),
   host: argv.h || argv.host || 'localhost',
   port: argv.p || argv.port || 8888
 };
 
 function isIgnorePath(filepath) {
-  return filepath === 'main.css' || path.dirname(filepath).match(/^(app-compiled)(\/|$)/);
+  return filepath === 'main.css' || path.dirname(filepath).match(/^(admin-compiled|app-compiled)(\/|$)/);
 }
 
 function rootPath(filepath) {
@@ -30,7 +30,7 @@ function rootPath(filepath) {
 
 function handleCompile(filepath, callback) {
   var ext = path.extname(filepath);
-  var inUncompiled = path.dirname(filepath).match(/^(app)(\/|$)/);
+  var inUncompiled = path.dirname(filepath).match(/^(admin|app)(\/|$)/);
   var compiledFile;
 
   if (ext === '.css') {
@@ -41,18 +41,16 @@ function handleCompile(filepath, callback) {
       callback(null, 'main.css', false);
     });
   } else if (ext === '.js' && inUncompiled) {
-    try {
-      compiledFile = filepath.replace(/^(app)/g, '$1-compiled');
-      precompile.precompile(filepath, compiledFile, options.root, function(err) {
+    compiledFile = filepath.replace(/^(admin|app)/g, '$1-compiled');
+    precompile.precompile(filepath, compiledFile, options.root)
+      .then(function() {
+        callback(null, compiledFile, true);
+      }).catch(function(err) {
         callback(err, compiledFile, true);
       });
-    }
-    catch(e) {
-      callback(e && e[0] || e);
-    }
   } else if (inUncompiled) {
     // copy any non-js accross
-    compiledFile = filepath.replace(/^(app)/g, '$1-compiled');
+    compiledFile = filepath.replace(/^(admin|app)/g, '$1-compiled');
     fs.writeFileSync(rootPath(compiledFile), fs.readFileSync(rootPath(filepath)));
     callback(null, compiledFile, true);
   } else {
@@ -64,7 +62,8 @@ var server = flo(options.root, {
   port: options.port,
   host: options.host,
   verbose: options.verbose,
-  glob: options.glob
+  glob: options.glob,
+  useWatchman: true,
 }, function resolver(filepath, callback) {
   // Minimal debugging
   if (!options.verbose) {

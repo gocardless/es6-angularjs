@@ -7,6 +7,8 @@ function amd(loader) {
   // by default we only enforce AMD noConflict mode in Node
   var isNode = typeof module != 'undefined' && module.exports;
 
+  loader._extensions.push(amd);
+
   // AMD Module Format Detection RegEx
   // define([.., .., ..], ...)
   // define(varName); || define(function(require, exports) {}); || define({})
@@ -62,7 +64,9 @@ function amd(loader) {
       Promise.all(names.map(function(name) {
         return loader['import'](name, referer);
       })).then(function(modules) {
-        callback.apply(null, modules);
+        if(callback) {
+          callback.apply(null, modules);
+        }
       }, errback);
 
     // commonjs require

@@ -1,9 +1,4 @@
-  if (!System.paths['@traceur'])
-    System.paths['@traceur'] = $__curScript && $__curScript.getAttribute('data-traceur-src')
-      || ($__curScript && $__curScript.src 
-        ? $__curScript.src.substr(0, $__curScript.src.lastIndexOf('/') + 1) 
-        : System.baseURL + (System.baseURL.lastIndexOf('/') == System.baseURL.length - 1 ? '' : '/')
-        ) + 'traceur.js';
+
 };
 
 var $__curScript, __eval;
@@ -107,5 +102,4 @@ var $__curScript, __eval;
   }
 })();
 
-})(typeof window != 'undefined' ? window : (typeof WorkerGlobalScope != 'undefined' ?
-                                           self : global));
+})(typeof window != 'undefined' ? window : (typeof WorkerGlobalScope != 'undefined' ? self : global));

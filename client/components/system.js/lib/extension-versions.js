@@ -59,6 +59,8 @@ function versions(loader) {
   if (typeof indexOf == 'undefined')
     indexOf = Array.prototype.indexOf;
 
+  loader._extensions.push(versions);
+
   var semverRegEx = /^(\d+)(?:\.(\d+)(?:\.(\d+)(?:-([\da-z-]+(?:\.[\da-z-]+)*)(?:\+([\da-z-]+(?:\.[\da-z-]+)*))?)?)?)?$/i;
   var numRegEx = /^\d+$/;
 
@@ -239,14 +241,14 @@ function versions(loader) {
   var loaderNormalize = loader.normalize;
   // NOW use modified match algorithm if possible
   loader.normalize = function(name, parentName, parentAddress) {
-    if (!loader.versions)
-      loader.versions = {};
+    if (!this.versions)
+      this.versions = {};
     var packageVersions = this.versions;
 
     // strip the version before applying map config
     var stripVersion, stripSubPathLength;
-    if (name.indexOf('@') > 0) {
-      var versionIndex = name.lastIndexOf('@');
+    var versionIndex = name.indexOf('!') != -1 ? 0 : name.lastIndexOf('@');
+    if (versionIndex > 0) {
       var parts = name.substr(versionIndex + 1, name.length - versionIndex - 1).split('/');
       stripVersion = parts[0];
       stripSubPathLength = parts.length;
@@ -256,7 +258,7 @@ function versions(loader) {
     // run all other normalizers first
     return Promise.resolve(loaderNormalize.call(this, name, parentName, parentAddress)).then(function(normalized) {
       
-      var index = normalized.indexOf('@');
+      var index = normalized.indexOf('!') != -1 ? 0 : normalized.indexOf('@');
 
       // if we stripped a version, and it still has no version, add it back
       if (stripVersion && (index == -1 || index == 0)) {

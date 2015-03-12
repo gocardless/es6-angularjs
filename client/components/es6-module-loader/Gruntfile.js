@@ -14,9 +14,7 @@ module.exports = function (grunt) {
         jshintrc: '.jshintrc'
       },
       dist: [
-        'lib/index.js',
-        'lib/loader.js',
-        'lib/system.js'
+        'lib/index.js'
       ]
     },
     concat: {
@@ -40,6 +38,7 @@ module.exports = function (grunt) {
       dist: {
         src: [
           'src/loader.js',
+          'src/transpiler.js',
           'src/system.js'
         ],
         dest: 'dist/<%= pkg.name %>.js'
@@ -78,7 +77,7 @@ module.exports = function (grunt) {
         src: 'dist/<%= pkg.name %>.src.js',
         dest: 'dist/<%= pkg.name %>.js'
       },
-      polyfillOnly: {
+      distSansPromises: {
         src: 'dist/<%= pkg.name %>-sans-promises.src.js',
         dest: 'dist/<%= pkg.name %>-sans-promises.js'
       }

@@ -1,7 +1,5 @@
 #!/usr/bin/env node
 
-'use strict';
-
 var AssetGraph = require('assetgraph-builder');
 var systemJsAssetGraph = require('systemjs-assetgraph');
 
@@ -13,11 +11,8 @@ var config = {
   optimizeImages: false,
   inlineSize: 4096,
   sharedBundles: false,
-  manifest: false,
   version: undefined,
   noCompress: false,
-  stripDebug: false,
-  browsers: ['> 1%', 'last 2 versions', 'Firefox ESR']
 };
 
 if (!config.root || !config.outRoot) {
@@ -36,25 +31,25 @@ new AssetGraph({ root: config.root })
   .loadAssets(config.loadAssets)
   .queue(systemJsAssetGraph({
     outRoot: config.outRoot,
-
-    // comment out the below to use injection instead of bundling
-    // override use of app-compiled to ensure source maps
-    configOverride: {
-      map: {
-        app: 'app'
-      }
+    bundle: true,
+    builderConfig: {
+      sourceMaps: false,
+      // lowResSourceMaps: true,
+      minify: true,
+      mangle: true,
+      config: {
+        map: {
+          app: 'app',
+        },
+      },
     },
-    bundle: true
   }))
   .buildProduction({
-    version: config.version,
     optimizeImages: config.optimizeImages,
     inlineSize: config.inlineSize,
-    browsers: config.browsers,
-    manifest: config.manifest,
     sharedBundles: config.sharedBundles,
+    version: config.version,
     noCompress: config.noCompress,
-    stripDebug: config.stripDebug
   })
   .writeAssetsToDisc({ url: /^file:/, isLoaded: true }, config.outRoot)
   .writeStatsToStderr()

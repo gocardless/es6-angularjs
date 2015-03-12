@@ -15,25 +15,19 @@ var options = {
   output: path.resolve(argv._[1])
 };
 
-read(options.input, function(err, buffer){
+read(options.input, function(err, buffer) {
   if (err) {
     console.error(err);
     console.error(err.stack);
   }
   var css = buffer.toString();
 
-  try {
-    css = rework(css, { source: options.input })
-      .use(reworkImport())
-      .use(reworkVars())
-      .toString();
+  css = rework(css, { source: options.input })
+    .use(reworkImport())
+    .use(reworkVars())
+    .toString();
 
-    css = autoprefixer.process(css);
-  } catch (err) {
-    console.error(err);
-    console.error(err.stack);
-    console.error(css);
-  }
+  css = autoprefixer.process(css);
 
   write(options.output, css);
 });

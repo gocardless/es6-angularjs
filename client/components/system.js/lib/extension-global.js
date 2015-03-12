@@ -11,6 +11,8 @@
 */
 function global(loader) {
 
+  loader._extensions.push(global);
+
   function readGlobalProperty(p, value) {
     var pParts = p.split('.');
     while (pParts.length)
@@ -43,7 +45,8 @@ function global(loader) {
         curGlobalObj = {};
         ignoredGlobalProps = ['indexedDB', 'sessionStorage', 'localStorage',
           'clipboardData', 'frames', 'webkitStorageInfo', 'toolbar', 'statusbar',
-          'scrollbars', 'personalbar', 'menubar', 'locationbar', 'webkitIndexedDB'
+          'scrollbars', 'personalbar', 'menubar', 'locationbar', 'webkitIndexedDB',
+          'screenTop', 'screenLeft'
         ];
         for (var g in loader.global) {
           if (indexOf.call(ignoredGlobalProps, g) != -1) { continue; }
@@ -62,12 +65,8 @@ function global(loader) {
         var exports = {};
 
         // run init
-        if (init) {
-          var depModules = [];
-          for (var i = 0; i < deps.length; i++)
-            depModules.push(require(deps[i]));
-          singleGlobal = init.apply(loader.global, depModules);
-        }
+        if (init)
+          singleGlobal = init.call(loader.global);
 
         // check for global changes, creating the globalObject for the module
         // if many globals, then a module object for those is created

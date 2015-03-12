@@ -19,8 +19,11 @@
 function register(loader) {
   if (typeof indexOf == 'undefined')
     indexOf = Array.prototype.indexOf;
-  if (typeof __eval == 'undefined')
+  if (typeof __eval == 'undefined' || typeof document != 'undefined' && !document.addEventListener)
     __eval = 0 || eval; // uglify breaks without the 0 ||
+
+  loader._extensions = loader._extensions || [];
+  loader._extensions.push(register);
 
   // define exec for easy evaluation of a load record (load.name, load.source, load.address)
   // main feature is source maps support handling
@@ -74,7 +77,7 @@ function register(loader) {
   // loader.register sets loader.defined for declarative modules
   var anonRegister;
   var calledRegister;
-  function register(name, deps, declare, execute) {
+  function registerModule(name, deps, declare, execute) {
     if (typeof name != 'string') {
       execute = declare;
       declare = deps;
@@ -108,7 +111,7 @@ function register(loader) {
     if (name) {
       register.name = name;
       // we never overwrite an existing define
-      if (!loader.defined[name])
+      if (!(name in loader.defined))
         loader.defined[name] = register; 
     }
     // anonymous register
@@ -153,7 +156,7 @@ function register(loader) {
     if (loader.register)
       return;
 
-    loader.register = register;
+    loader.register = registerModule;
 
     if (!loader.defined)
       loader.defined = {};
@@ -198,7 +201,7 @@ function register(loader) {
       if (depEntry.groupIndex === undefined || depEntry.groupIndex < depGroupIndex) {
         
         // if already in a group, remove from the old group
-        if (depEntry.groupIndex) {
+        if (depEntry.groupIndex !== undefined) {
           groups[depEntry.groupIndex].splice(indexOf.call(groups[depEntry.groupIndex], depEntry), 1);
 
           // if the old group is empty, then we have a mixed depndency cycle
@@ -215,6 +218,10 @@ function register(loader) {
 
   function link(name, loader) {
     var startEntry = loader.defined[name];
+
+    // skip if already linked
+    if (startEntry.module)
+      return;
 
     startEntry.groupIndex = 0;
 
@@ -395,7 +402,7 @@ function register(loader) {
     var entry = loader.defined[moduleName];
 
     // if already seen, that means it's an already-evaluated non circular dependency
-    if (entry.evaluated || !entry.declarative)
+    if (!entry || entry.evaluated || !entry.declarative)
       return;
 
     // this only applies to declarative modules which late-execute
@@ -437,7 +444,7 @@ function register(loader) {
 
   var loaderTranslate = loader.translate;
   loader.translate = function(load) {
-    this.register = register;
+    this.register = registerModule;
 
     this.__exec = exec;
 
@@ -491,14 +498,13 @@ function register(loader) {
       anonRegister = null;
       calledRegister = false;
 
-      var System = loader.global.System = loader.global.System || loader;
+      var curSystem = loader.global.System;
 
-      var curRegister = System.register;
-      System.register = register;
+      loader.global.System = loader;
 
       loader.__exec(load);
 
-      System.register = curRegister;
+      loader.global.System = curSystem;
 
       if (anonRegister)
         entry = anonRegister;
@@ -552,10 +558,13 @@ function register(loader) {
           // remove from the registry
           loader.defined[load.name] = undefined;
 
-          var module = loader.newModule(entry.declarative ? entry.module.exports : { 'default': entry.module.exports, '__useDefault': true });
+          var module = entry.module.exports;
+
+          if (!entry.declarative && module.__esModule !== true)
+            module = { 'default': module, __useDefault: true };
 
           // return the defined module object
-          return module;
+          return loader.newModule(module);
         }
       };
     });

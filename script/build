@@ -20,14 +20,15 @@ rm -r $DIST
 
 # Copy
 cp -a ./client/. $DIST
+echo "Copied ./client to $DIST"
 
 # Build
 ./script/css
-./script/precompile
+echo "Compiled css"
 
 # Increas the max number of file descriptiors
 ulimit -n 4096
 
 script/lib/build-production.js --root ./client --outroot $DIST *.html
 
-rm -r $DIST/app $DIST/app-compiled $DIST/components $DIST/assets/stylesheets $DIST/*.js $DIST/*.css
+# rm -r $DIST/app $DIST/app-compiled $DIST/components $DIST/assets/stylesheets $DIST/*.js $DIST/*.css

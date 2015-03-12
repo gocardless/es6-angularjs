@@ -2,6 +2,7 @@
 
 // Usage: script/precompile
 // Precompiles client/app to client/app-compiled and
+//   client/admin to client/admin-compiled.
 
 'use strict';
 
@@ -10,47 +11,49 @@ var precompile = require('./lib/precompile');
 var mkdirp = require('mkdirp');
 var path = require('path');
 var fs = require('graceful-fs');
+var RSVP = require('rsvp');
+var Promise = RSVP.Promise;
+var denodeify = RSVP.denodeify;
 
-var failed = false;
-
-function preCompile(inDir, outDir, baseDir) {
-  glob(path.resolve(baseDir, inDir) + '/**/*', function(err, files) {
-    if (err) throw err;
-
-    files.forEach(function(file) {
-      var relFile = path.relative(baseDir, file);
-
-      var outFile = outDir + '/' + relFile.substr(inDir.length);
-
-      mkdirp(path.resolve(baseDir, path.dirname(outFile)), function(err) {
-        if (err) throw err;
-
-        if (failed) {
-          return;
-        }
-
-        if (relFile.match(/^(app)\/.+\.js$/)) {
-          precompile.precompile(relFile, outFile, baseDir, function(err) {
-            if (err)
-              throw err;
-          });
-        } else {
-          fs.readFile(file, function(err, source) {
-            if (err) {
-              if (err.code != 'EISDIR')
-                throw err;
-            } else {
-              fs.writeFile(path.resolve(baseDir, outFile), source, function(err) {
-                if (err)
-                  throw err;
-              });
-            }
-          });
-        }
-      });
-
+function copyFile(inFile, outFile) {
+  return denodeify(fs.readFile)(inFile)
+    .then(function(source) {
+      return denodeify(fs.writeFile)(outFile, source);
     });
-  });
 }
 
-preCompile('app', 'app-compiled', 'client');
+function processFiles(filePaths, baseDir) {
+  return Promise.all(filePaths.map(function(filePath) {
+    var inFile = filePath[0];
+    var outFile = filePath[1];
+
+    return denodeify(mkdirp)(path.resolve(baseDir, path.dirname(outFile)))
+      .then(function() {
+        if (inFile.match(/^(app|admin)\/.+\.js$/)) {
+          return precompile.precompile(inFile, outFile, baseDir)
+        } else {
+          return copyFile(path.resolve(baseDir, inFile), path.resolve(baseDir, outFile));
+        }
+      });
+  }));
+}
+
+function preCompileDir(inDir, outDir, baseDir) {
+  return denodeify(glob)(path.join(path.resolve(baseDir, inDir), '**', '*'))
+    .then(function(filePaths) {
+      var filePathTuples = filePaths.map(function(filePath) {
+        var inFile = path.relative(baseDir, filePath);
+        var outFile = path.join(outDir, inFile.substr(inDir.length));
+        return [inFile, outFile];
+      });
+      return processFiles(filePathTuples, baseDir);
+    }).catch(function(rejection) {
+      if (rejection.code !== 'EISDIR') {
+        console.log(rejection);
+        throw rejection;
+      }
+    });
+}
+
+preCompileDir('app', 'app-compiled', 'client');
+preCompileDir('admin', 'admin-compiled', 'client');

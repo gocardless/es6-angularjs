@@ -18,9 +18,7 @@ exports.config = {
     browser.addMockModule('disableNgAnimate', disableNgAnimate);
   },
   directConnect: true,
-  suites: {
-    full: 'client/app/**/*.e2e.js'
-  },
+  specs: 'client/app/**/*.e2e.js',
   capabilities: {
     browserName: 'chrome',
     shardTestFiles: true,

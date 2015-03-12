@@ -9,6 +9,9 @@
 var traceur = require('traceur');
 var path = require('path');
 var fs = require('graceful-fs');
+var RSVP = require('rsvp');
+var denodeify = RSVP.denodeify;
+var mkdirp = require('mkdirp');
 
 var traceurConfig;
 function loadConfig() {
@@ -18,7 +21,7 @@ function loadConfig() {
   traceurConfig.sourceMaps = 'memory';
 }
 
-function precompile(inFile, outFile, basePath, callback) {
+function precompile(inFile, outFile, basePath) {
   if (!traceurConfig) {
     loadConfig();
   }
@@ -27,29 +30,23 @@ function precompile(inFile, outFile, basePath, callback) {
 
   var compiler = new traceur.Compiler(traceurConfig);
 
-  var sourceMapFile = outFile.replace(/\.js$/, '.map');
+  var sourceMapPath = path.resolve(basePath, outFile.replace(/\.js$/, '.map'));
+  var inPath = path.resolve(basePath, inFile);
+  var outPath = path.resolve(basePath, outFile);
 
-  fs.readFile(path.resolve(basePath, inFile), function(err, inSource) {
-    if (err)
-      return callback(err);
-
-    var source, sourceMap;
-
-    try {
-      source = compiler.compile(inSource.toString(), '/' + inFile, path.basename(outFile));
-      sourceMap = compiler.getSourceMap();  
-    }
-    catch(e) {
-      return callback(e);
-    }
-
-    fs.writeFile(path.resolve(basePath, outFile), source, function(err) {
-      if (err)
-        return callback(err);
-
-      fs.writeFile(path.resolve(basePath, sourceMapFile), sourceMap, callback);
+  return denodeify(fs.readFile)(inPath)
+    .then(function(inSource) {
+      return compiler.compile(inSource.toString(), '/' + inFile, path.basename(outFile));
+    })
+    .then(function(source) {
+      return denodeify(mkdirp)(path.dirname(outPath))
+        .then(function() {
+          return RSVP.Promise.all([
+            denodeify(fs.writeFile)(outPath, source),
+            denodeify(fs.writeFile)(sourceMapPath, compiler.getSourceMap())
+          ]);
+        });
     });
-  });
 }
 
 exports.precompile = precompile;

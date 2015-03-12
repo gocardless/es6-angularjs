@@ -1,3 +1,5 @@
+System.transpiler = 'traceur';
+
 System.config({
   meta: {
     'components/angular/angular': { format: 'global', exports: 'angular' },
@@ -13,7 +15,7 @@ System.config({
     'app': 'app-compiled',
     'text': 'components/plugin-text/text',
     'json': 'components/plugin-json/json',
-    'lodash': 'components/lodash/dist/lodash',
+    'lodash': 'components/lodash/lodash',
     'angular': 'components/angular/angular',
     'angular-mock': 'components/angular-mocks/angular-mocks',
     'angular-touch': 'components/angular-touch/angular-touch',

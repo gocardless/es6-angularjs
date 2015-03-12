@@ -2,6 +2,7 @@
   SystemJS CommonJS Format
 */
 function cjs(loader) {
+  loader._extensions.push(cjs);
 
   // CJS Module Format
   // require('...') || exports[''] = ... || exports.asd = ... || module.exports = ...
@@ -38,7 +39,7 @@ function cjs(loader) {
     }
 
     if (load.metadata.format == 'cjs') {
-      load.metadata.deps = load.metadata.deps ? load.metadata.deps.concat(getCJSDeps(load.source)) : load.metadata.deps;
+      load.metadata.deps = load.metadata.deps ? load.metadata.deps.concat(getCJSDeps(load.source)) : getCJSDeps(load.source);
 
       load.metadata.executingRequire = true;
 
@@ -47,12 +48,16 @@ function cjs(loader) {
         dirname.pop();
         dirname = dirname.join('/');
 
+        // if on the server, remove the "file:" part from the dirname
+        if (System._nodeRequire)
+          dirname = dirname.substr(5);
+
         var globals = loader.global._g = {
           global: loader.global,
           exports: exports,
           module: module,
           require: require,
-          __filename: load.address,
+          __filename: System._nodeRequire ? load.address.substr(5) : load.address,
           __dirname: dirname
         };
 

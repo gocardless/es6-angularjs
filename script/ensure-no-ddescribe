@@ -1,17 +1,37 @@
 #!/bin/bash
 
-DDESCRIBE_LINES=`grep 'ddescribe\|iit\|browser.pause\(\)' -l --include \*.js -r client/app`
+IDTEST_LINES=`grep 'ddescribe\|iit\(\)' -l --include \*.js -r client/app client/admin`
+XTEST_LINES=`grep 'xdescribe\|xit\(\)' -l --include \*.js -r client/app client/admin`
+FTEST_LINES=`grep 'fdescribe\|fit\(\)' -l --include \*.js -r client/app client/admin`
+BROW_PAUSE_LINES=`grep 'browser.pause\(\)' -l --include \*.js -r client/app client/admin`
 
-DDESCRIBE_COUNT=`echo $DDESCRIBE_LINES | awk 'NF > 0' | wc -l | awk '{ print $1}'`
+IDTEST_COUNT=`echo $IDTEST_LINES | awk 'NF > 0' | wc -l | awk '{ print $1}'`
+XTEST_COUNT=`echo $XTEST_LINES | awk 'NF > 0' | wc -l | awk '{ print $1}'`
+FTEST_COUNT=`echo $FTEST_LINES | awk 'NF > 0' | wc -l | awk '{ print $1}'`
+BROW_PAUSE_COUNT=`echo $BROW_PAUSE_LINES | awk 'NF > 0' | wc -l | awk '{ print $1}'`
 
 ZERO="0"
 
-if [ "$DDESCRIBE_COUNT" != "$ZERO" ];
+if [ "$IDTEST_COUNT" != "$ZERO" ]
 then
-  echo "WARNING: found ddescribe, iit or browser.pause(), exiting 1:"
-  echo $DDESCRIBE_LINES
+  echo "WARNING: found ddescribe or iit, exiting 1:"
+  echo $IDTEST_LINES
+  exit 1
+elif [ "$XTEST_COUNT" != "$ZERO" ]
+then
+  echo "WARNING: found xdescribe or xit, exiting 1:"
+  echo $XTEST_LINES
+  exit 1
+elif [ "$FTEST_COUNT" != "$ZERO" ]
+then
+  echo "WARNING: found fdescribe or fit, exiting 1:"
+  echo $FTEST_LINES
+  exit 1
+elif [ "$BROW_PAUSE_COUNT" != "$ZERO" ]
+then
+  echo "WARNING: found browser.pause(), exiting 1:"
+  echo $BROW_PAUSE_LINES
   exit 1
 else
   exit 0
 fi
-

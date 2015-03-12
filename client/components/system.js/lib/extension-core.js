@@ -3,13 +3,13 @@
  * Code should be vaguely readable
  * 
  */
+var originalSystem = $__global.System.originalSystem;
 function core(loader) {
-
   /*
     __useDefault
     
     When a module object looks like:
-    newModule({
+    newModule(
       __useDefault: true,
       default: 'some-module'
     })
@@ -97,45 +97,22 @@ function core(loader) {
     return Promise.resolve(loaderLocate.call(this, load));
   }
 
-  // Traceur conveniences
-  // good enough ES6 detection regex - format detections not designed to be accurate, but to handle the 99% use case
-  var es6RegEx = /(^\s*|[}\);\n]\s*)(import\s+(['"]|(\*\s+as\s+)?[^"'\(\)\n;]+\s+from\s+['"]|\{)|export\s+\*\s+from\s+["']|export\s+(\{|default|function|class|var|const|let))/;
-
-  var loaderTranslate = loader.translate;
-  loader.translate = function(load) {
-    var loader = this;
-
-    if (load.name == '@traceur')
-      return loaderTranslate.call(loader, load);
-
-    // detect ES6
-    else if (load.metadata.format == 'es6' || !load.metadata.format && load.source.match(es6RegEx)) {
-      load.metadata.format = 'es6';
-
-      // dynamically load Traceur for ES6 if necessary
-      if (!loader.global.traceur) {
-        return loader['import']('@traceur').then(function() {
-          return loaderTranslate.call(loader, load);
-        });
-      }
+  function applyExtensions(extensions, loader) {
+    loader._extensions = [];
+    for(var i = 0, len = extensions.length; i < len; i++) {
+      extensions[i](loader);
     }
-
-    return loaderTranslate.call(loader, load);
   }
 
-  // always load Traceur as a global
-  var loaderInstantiate = loader.instantiate;
-  loader.instantiate = function(load) {
-    var loader = this;
-    if (load.name == '@traceur') {
-      loader.__exec(load);
-      return {
-        deps: [],
-        execute: function() {
-          return loader.newModule({});
-        }
-      };
-    }
-    return loaderInstantiate.call(loader, load);
-  }
+  loader._extensions = loader._extensions || [];
+  loader._extensions.push(core);
+
+  loader.clone = function() {
+    var originalLoader = this;
+    var loader = new LoaderPolyfill(originalSystem);
+    loader.baseURL = originalLoader.baseURL;
+    loader.paths = { '*': '*.js' };
+    applyExtensions(originalLoader._extensions, loader);
+    return loader;
+  };
 }
